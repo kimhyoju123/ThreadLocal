@@ -1,6 +1,12 @@
 package com.example.logtracedemo.app.controller;
 
 import com.example.logtracedemo.app.service.OrderService;
+import com.example.logtracedemo.app.strategy.Context;
+import com.example.logtracedemo.app.strategy.InterfaceParamContext;
+import com.example.logtracedemo.app.strategy.Strategy;
+import com.example.logtracedemo.app.strategy.concrete.StrategyConcreteController;
+import com.example.logtracedemo.app.template.AbstractTemplate;
+import com.example.logtracedemo.app.template.concrete.ConcreteController;
 import com.example.logtracedemo.common.logtrace.LogTrace;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,13 +21,13 @@ public class OrderController {
 
     @GetMapping("/")
     public String getOrder() {
-        logTrace.begin("OrderController.getOrder()");
 
-        String result = orderService.getOrder();
+        // Strategy 인터페이스를 파라미터 받는 전략패턴 == 템플릿 콜백 패턴
+        InterfaceParamContext context = new InterfaceParamContext(logTrace);
+        return context.execute("OrderController.getOrder()", () -> {
+            return orderService.getOrder();
+        });
 
-        logTrace.end("OrderController.getOrder()");
-
-        return result;
     }
 
 }
